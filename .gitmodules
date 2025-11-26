@@ -1,0 +1,3 @@
+[submodule "extern/isaacsim-spot-remotecontroldemo"]
+	path = extern/isaacsim-spot-remotecontroldemo
+	url = https://github.com/maido-39/Isaacsim-spot-remotecontroldemo
