@@ -78,13 +78,15 @@ class OmniVLACSVLogger:
             'goal_heading',
             'linear_vel', 'angular_vel',
             'waypoint_dx', 'waypoint_dy', 'waypoint_hx', 'waypoint_hy',
+            'cmd_vel_vx', 'cmd_vel_vy', 'cmd_vel_yaw',
         ]
         self.csv_writer.writerow(header)
         self.csv_file.flush()
         LOGGER.info(f"CSV 로거 초기화: {csv_path}")
     
     def log(self, timestamp, robot_position, robot_heading, goal_position, goal_heading,
-            linear_vel, angular_vel, waypoint_dx, waypoint_dy, waypoint_hx, waypoint_hy):
+            linear_vel, angular_vel, waypoint_dx, waypoint_dy, waypoint_hx, waypoint_hy,
+            cmd_vel_vx=None, cmd_vel_vy=None, cmd_vel_yaw=None):
         """데이터를 CSV에 기록."""
         row = [
             timestamp,
@@ -94,6 +96,9 @@ class OmniVLACSVLogger:
             goal_heading,
             linear_vel, angular_vel,
             waypoint_dx, waypoint_dy, waypoint_hx, waypoint_hy,
+            cmd_vel_vx if cmd_vel_vx is not None else 0.0,
+            cmd_vel_vy if cmd_vel_vy is not None else 0.0,
+            cmd_vel_yaw if cmd_vel_yaw is not None else 0.0,
         ]
         self.csv_writer.writerow(row)
         self.csv_file.flush()
@@ -286,15 +291,8 @@ def main():
         sys.stdout.flush()
         shutdown_requested.set()
         stop_event.set()
-        # Isaac Sim을 강제 종료
-        try:
-            if simulation_app.is_running():
-                LOGGER.info("Isaac Sim 종료 중...")
-                sys.stdout.flush()
-                simulation_app.close()
-        except Exception as e:
-            LOGGER.warning(f"SimulationApp 종료 중 오류: {e}")
-            sys.stdout.flush()
+        # 플래그만 설정하고, 실제 종료는 finally 블록에서 처리
+        # (visualization이 실행되도록 보장하기 위함)
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)

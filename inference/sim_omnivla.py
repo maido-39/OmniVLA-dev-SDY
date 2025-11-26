@@ -445,6 +445,9 @@ class SimOmniVLAController:
                     waypoint_dy=chosen_waypoint[1],
                     waypoint_hx=chosen_waypoint[2],
                     waypoint_hy=chosen_waypoint[3],
+                    cmd_vel_vx=command[0],
+                    cmd_vel_vy=command[1],
+                    cmd_vel_yaw=command[2],
                 )
             
             # cmd_vel 로깅 (여러 방법으로 출력 시도)

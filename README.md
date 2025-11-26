@@ -28,6 +28,59 @@ Please set up a conda environment (see instructions in [SETUP.md](SETUP.md)).
 
 5. To try the finetuned checkpoints with the CAST dataset, update the path and step number in "InferenceConfig" within "run_omnivla.py".
 
+### Isaac Sim Simulation
+
+This repository includes integration with NVIDIA Isaac Sim for simulating OmniVLA navigation with a quadruped robot (Spot).
+
+#### Prerequisites
+
+1. **NVIDIA Isaac Sim**: Install Isaac Sim 4.5.0 or later from [NVIDIA Omniverse](https://www.nvidia.com/en-us/omniverse/isaac-sim/).
+2. **Submodule Setup**: The Isaac Sim Spot simulation environment is included as a submodule:
+   ```bash
+   git submodule update --init --recursive
+   ```
+
+#### Running the Simulation
+
+1. **Start Isaac Sim** and ensure it's properly configured.
+
+2. **Run the simulation**:
+   ```bash
+   python simulations/quadruped_simulation.py
+   ```
+
+3. **Simulation Features**:
+   - OmniVLA inference runs in a separate thread for real-time performance
+   - Shared memory communication between Isaac Sim and OmniVLA
+   - Real-time visualization with Pygame (ego and top-down camera views)
+   - Automatic CSV logging of observations, actions, and commands
+   - Automatic visualization generation upon simulation completion
+
+4. **Data Output**:
+   - Simulation data is saved to `sim_data/YYYY-MM-DD_HH-MM-SS-omnivla_sim/`
+   - CSV file (`data.csv`) contains: timestamps, robot positions, headings, goal information, velocity commands, and waypoints
+   - Visualization plots are automatically generated and saved:
+     - `trajectory_and_commands.png`: Trajectory, velocity commands, and heading plots
+     - `analysis.png`: Distance to goal, velocity magnitude, waypoint directions, and heading error
+
+5. **Visualizing Results** (standalone):
+   ```bash
+   python simulations/visualize_simulation.py sim_data/YYYY-MM-DD_HH-MM-SS-omnivla_sim/data.csv --wall-size 10.0 --save-dir <output_directory>
+   ```
+
+#### Configuration
+
+- Modify goal image and language prompt in `simulations/quadruped_simulation.py` (around line 327-328)
+- Adjust simulation parameters in `extern/isaacsim-spot-remotecontroldemo/quadruped_example.py` (DEFAULT_CONFIG)
+- Camera settings, robot limits, and environment parameters can be customized
+
+#### Notes
+
+- The simulation uses `enable_csv_logging=False` and `enable_image_saving=False` by default for performance
+- To save camera images, set `enable_image_saving=True` in the simulation initialization
+- Press `Ctrl+C` to gracefully terminate the simulation
+- Experiment data directories (`expr_data/`, `sim_data/`) are automatically ignored by git
+
 ### Training
 We provide the training code along with a sample dataloader to help you quickly understand the required data loading structure. Since preparing the full training dataset is resource-intensive, we include this simplified code base for convenience.
 
@@ -83,6 +136,8 @@ In our training setup, we use 8 Nvidia H100 GPUs (80 GB each) across 8 nodes. Th
 ### Acknowledgement
 We implement our ideas and design choices on top of the pretrained checkpoints. Our work builds upon the [OpenVLA-OFT](https://openvla-oft.github.io/) codebase, with additional code added to create OmniVLA. As such, our implementation leverages many components of the OpenVLA-OFT codebase. We sincerely appreciate the effort and contributions of the OpenVLA-OFT team!
 
+**Isaac Sim Integration**: The simulation environment is based on the Isaac Sim Spot Remote Control Demo, which is included as a submodule (`extern/isaacsim-spot-remotecontroldemo`). The Isaac Sim code is subject to NVIDIA's license terms. The OmniVLA integration code (`simulations/quadruped_simulation.py`, `simulations/visualize_simulation.py`, `inference/sim_omnivla.py`) is released under the MIT license as part of this repository.
+
 ## Citing
 ```
 @misc{hirose2025omnivla,
@@ -94,3 +149,22 @@ We implement our ideas and design choices on top of the pretrained checkpoints. 
       primaryClass={cs.RO},
       url={https://arxiv.org/abs/2509.19480}, 
 }
+```
+
+## Additional Contributions
+
+**Isaac Sim Simulation Integration** (Copyright (c) 2025 maido-39)
+
+The following components were added by maido-39 to enable OmniVLA simulation with Isaac Sim:
+
+- **Simulation Integration** (`simulations/quadruped_simulation.py`): Integration of OmniVLA with NVIDIA Isaac Sim for quadruped robot (Spot) simulation, including shared memory communication, multi-threaded inference, and real-time visualization.
+
+- **OmniVLA Simulation Wrapper** (`inference/sim_omnivla.py`): Wrapper class for running OmniVLA inference in simulation environments, with shared memory channels for observation and command exchange.
+
+- **Simulation Visualization** (`simulations/visualize_simulation.py`): Comprehensive visualization tools for analyzing simulation results, including trajectory plots, velocity commands, and performance metrics.
+
+- **CSV Data Logging**: Automatic logging of observations, actions, velocity commands, and waypoints during simulation runs.
+
+- **Shared Memory Communication System**: High-performance inter-thread communication for real-time data exchange between Isaac Sim and OmniVLA inference threads.
+
+These additions are released under the MIT license as part of this repository.

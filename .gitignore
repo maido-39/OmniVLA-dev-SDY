@@ -24,3 +24,12 @@ runs/
 **/__pycache__/
 # Ignore all wandb directories everywhere
 **/wandb/
+# Ignore experiment data directories
+expr_data/
+sim_data/
+# Ignore camera view images (ego/top views)
+**/camera/ego/
+**/camera/top/
+# Ignore diff and patch files
+*.diff
+*.patch

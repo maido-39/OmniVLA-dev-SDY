@@ -48,6 +48,9 @@ def load_simulation_csv(csv_path: Path) -> dict:
         'waypoint_dy': [],
         'waypoint_hx': [],
         'waypoint_hy': [],
+        'cmd_vel_vx': [],
+        'cmd_vel_vy': [],
+        'cmd_vel_yaw': [],
     }
     
     with open(csv_path, 'r') as f:
@@ -66,6 +69,10 @@ def load_simulation_csv(csv_path: Path) -> dict:
             data['waypoint_dy'].append(float(row['waypoint_dy']))
             data['waypoint_hx'].append(float(row['waypoint_hx']))
             data['waypoint_hy'].append(float(row['waypoint_hy']))
+            # cmd_vel fields may not exist in older CSV files
+            data['cmd_vel_vx'].append(float(row.get('cmd_vel_vx', 0.0)))
+            data['cmd_vel_vy'].append(float(row.get('cmd_vel_vy', 0.0)))
+            data['cmd_vel_yaw'].append(float(row.get('cmd_vel_yaw', 0.0)))
     
     # Convert to numpy arrays
     for key in data:
@@ -255,7 +262,14 @@ def visualize_simulation_results(csv_path: Path, wall_size: float = 10.0, save_p
     print("Simulation Statistics")
     print("="*60)
     print(f"Total duration: {data['times'][-1]:.2f} s")
-    print(f"Total distance traveled: {np.sum(np.diff(np.sqrt(np.diff(data['robot_pos_x'])**2 + np.diff(data['robot_pos_y'])**2))):.2f} m")
+    
+    # Calculate total distance traveled correctly
+    positions = np.column_stack([data['robot_pos_x'], data['robot_pos_y']])
+    diffs = np.diff(positions, axis=0)
+    segment_distances = np.linalg.norm(diffs, axis=1)
+    total_distance = np.sum(segment_distances)
+    print(f"Total distance traveled: {total_distance:.2f} m")
+    
     print(f"Final distance to goal: {distances[-1]:.2f} m")
     print(f"Min distance to goal: {distances.min():.2f} m")
     print(f"Average linear velocity: {data['linear_vel'].mean():.4f} m/s")
