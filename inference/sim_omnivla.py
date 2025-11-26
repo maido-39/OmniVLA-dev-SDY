@@ -10,6 +10,7 @@ from __future__ import annotations
 import importlib.util
 import logging
 import math
+import sys
 import threading
 import time
 from dataclasses import dataclass
@@ -24,32 +25,76 @@ from PIL import Image
 LOGGER = logging.getLogger("SimOmniVLA")
 LOGGER.setLevel(logging.INFO)
 
+# 별도 스레드에서 실행되므로 명시적 핸들러 설정 필요
+# 기존 핸들러 제거 후 새로 추가 (중복 방지)
+LOGGER.handlers.clear()
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+handler.setFormatter(
+    logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+)
+LOGGER.addHandler(handler)
+LOGGER.propagate = False  # 상위 로거로 전파 방지
+
+# Isaac Sim이 stdout을 가로채는 경우를 대비해 stderr 핸들러도 추가
+stderr_handler = logging.StreamHandler(sys.stderr)
+stderr_handler.setLevel(logging.INFO)
+stderr_handler.setFormatter(
+    logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+)
+LOGGER.addHandler(stderr_handler)
+
 
 # ---------------------------------------------------------------------------
-# Dynamically load run_omnivla-ARIL.py (file name contains a hyphen)
+# Lazy loading for run_omnivla-ARIL.py (Isaac Sim과의 CUDA 충돌 방지)
 # ---------------------------------------------------------------------------
+RUN_MODULE = None
 RUN_SCRIPT_PATH = Path(__file__).with_name("run_omnivla-ARIL.py")
-SPEC = importlib.util.spec_from_file_location("run_omnivla_ARIL", RUN_SCRIPT_PATH)
-if SPEC is None or SPEC.loader is None:
-    raise ImportError(f"run_omnivla-ARIL.py 를 로드할 수 없습니다: {RUN_SCRIPT_PATH}")
-RUN_MODULE = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(RUN_MODULE)
+
+
+def _load_run_module():
+    """지연 로딩: 실제로 사용할 때만 모듈을 로드"""
+    global RUN_MODULE
+    if RUN_MODULE is not None:
+        return RUN_MODULE
+    
+    LOGGER.info("  → run_omnivla-ARIL.py 모듈 로딩 중...")
+    sys.stdout.flush()
+    
+    try:
+        SPEC = importlib.util.spec_from_file_location("run_omnivla_ARIL", RUN_SCRIPT_PATH)
+        if SPEC is None or SPEC.loader is None:
+            raise ImportError(f"run_omnivla-ARIL.py 를 로드할 수 없습니다: {RUN_SCRIPT_PATH}")
+        RUN_MODULE = importlib.util.module_from_spec(SPEC)
+        SPEC.loader.exec_module(RUN_MODULE)
+        
+        # 기본 modality 설정
+        RUN_MODULE.pose_goal = False
+        RUN_MODULE.satellite = False
+        RUN_MODULE.image_goal = False
+        RUN_MODULE.lan_prompt = True
+        
+        LOGGER.info("  → 모듈 로딩 완료")
+        sys.stdout.flush()
+        return RUN_MODULE
+    except Exception as e:
+        LOGGER.error(f"  → 모듈 로딩 실패: {e}", exc_info=True)
+        sys.stdout.flush()
+        raise
 
 
 # run_omnivla-ARIL 에 clip_angle 정의가 없을 경우 대비
-if hasattr(RUN_MODULE, "clip_angle"):
-    clip_angle_fn = RUN_MODULE.clip_angle
-else:
-    def clip_angle_fn(angle: float) -> float:
-        """[-pi, pi] 범위로 wrapping."""
-        return (angle + math.pi) % (2 * math.pi) - math.pi
-
-
-# 기본 modality 설정 (필요 시 외부에서 덮어쓸 수 있음)
-RUN_MODULE.pose_goal = False
-RUN_MODULE.satellite = False
-RUN_MODULE.image_goal = False
-RUN_MODULE.lan_prompt = True
+def clip_angle_fn(angle: float) -> float:
+    """[-pi, pi] 범위로 wrapping."""
+    if RUN_MODULE is not None and hasattr(RUN_MODULE, "clip_angle"):
+        return RUN_MODULE.clip_angle(angle)
+    return (angle + math.pi) % (2 * math.pi) - math.pi
 
 
 # ---------------------------------------------------------------------------
@@ -208,12 +253,26 @@ class SimOmniVLAConfig:
 class SimOmniVLAController:
     """OmniVLA 추론 결과를 Isaac Sim 명령으로 변환하는 워커."""
 
-    def __init__(self, config: SimOmniVLAConfig):
+    def __init__(self, config: SimOmniVLAConfig, csv_logger=None):
         self.config = config
+        self.csv_logger = csv_logger  # CSV 로거 참조
+        LOGGER.info("  → Goal 이미지 로딩 중...")
+        sys.stdout.flush()
         self.goal_image = Image.open(config.goal_image_path).convert("RGB")
+        LOGGER.info("  → Goal 이미지 로딩 완료")
+        sys.stdout.flush()
+
+        # 모듈 지연 로딩 (Isaac Sim 초기화 후)
+        run_module = _load_run_module()
 
         # 모델 초기화
-        self.inference_cfg = RUN_MODULE.InferenceConfig()
+        LOGGER.info("  → InferenceConfig 생성 중...")
+        sys.stdout.flush()
+        self.inference_cfg = run_module.InferenceConfig()
+        LOGGER.info(f"  → 모델 경로: {self.inference_cfg.vla_path}")
+        LOGGER.info("  → 모델 로딩 중... (GPU 메모리 할당 및 가중치 로딩, 시간이 걸릴 수 있습니다)")
+        sys.stdout.flush()
+        
         (
             self.vla,
             self.action_head,
@@ -222,11 +281,17 @@ class SimOmniVLAController:
             self.num_patches,
             self.action_tokenizer,
             self.processor,
-        ) = RUN_MODULE.define_model(self.inference_cfg)
+        ) = run_module.define_model(self.inference_cfg)
+        LOGGER.info("  → 모델 로딩 완료")
+        sys.stdout.flush()
 
-        RUN_MODULE.lan_prompt = bool(config.lan_inst_prompt)
+        run_module.lan_prompt = bool(config.lan_inst_prompt)
+        LOGGER.info(f"  → Language prompt 활성화: {run_module.lan_prompt}")
+        sys.stdout.flush()
 
-        self.inference = RUN_MODULE.Inference(
+        LOGGER.info("  → Inference 인스턴스 생성 중...")
+        sys.stdout.flush()
+        self.inference = run_module.Inference(
             save_dir=config.save_dir,
             lan_inst_prompt=config.lan_inst_prompt,
             goal_utm=[0.0, 0.0],
@@ -235,8 +300,11 @@ class SimOmniVLAController:
             action_tokenizer=self.action_tokenizer,
             processor=self.processor,
         )
+        LOGGER.info("  → Inference 인스턴스 생성 완료")
+        sys.stdout.flush()
 
         self.metric_waypoint_spacing = config.metric_waypoint_spacing
+        self.run_module = run_module  # 나중에 사용하기 위해 저장
 
     # ---- Core inference ---------------------------------------------------
     def _prepare_goal_pose(self, observation: SimulationObservation) -> np.ndarray:
@@ -265,19 +333,27 @@ class SimOmniVLAController:
             ],
             dtype=np.float32,
         )
+        # 디버깅: 좌표계 변환 확인
+        LOGGER.debug(
+            "Goal pose: relative=(%.3f, %.3f), normalized=(%.3f, %.3f), "
+            "robot_heading=%.3f, goal_heading=%.3f",
+            relative_x, relative_y,
+            goal_pose_loc_norm[0], goal_pose_loc_norm[1],
+            observation.robot_heading, observation.goal_heading
+        )
         return goal_pose_loc_norm
 
     def _forward_waypoints(self, observation: SimulationObservation) -> np.ndarray:
         goal_pose_loc_norm = self._prepare_goal_pose(observation)
         current_image = Image.fromarray(observation.image.astype(np.uint8)).convert("RGB")
 
-        lan_inst = self.inference.lan_inst_prompt if RUN_MODULE.lan_prompt else "xxxx"
+        lan_inst = self.inference.lan_inst_prompt if self.run_module.lan_prompt else "xxxx"
         batch = self.inference.data_transformer_omnivla(
             current_image,
             lan_inst,
             self.goal_image,
             goal_pose_loc_norm,
-            prompt_builder=RUN_MODULE.PurePromptBuilder,
+            prompt_builder=self.run_module.PurePromptBuilder,
             action_tokenizer=self.action_tokenizer,
             processor=self.processor,
         )
@@ -349,12 +425,45 @@ class SimOmniVLAController:
             waypoints = self._forward_waypoints(observation)
             linear_vel, angular_vel = self._waypoints_to_command(waypoints)
             command = np.array([linear_vel, 0.0, angular_vel], dtype=np.float32)
-            LOGGER.debug(
-                "OmniVLA 명령 생성 lin=%.3f ang=%.3f", linear_vel, angular_vel
+            
+            # 매 계산마다 cmd_vel 로깅
+            waypoint_select = 4
+            chosen_waypoint = waypoints[0][waypoint_select].copy()
+            chosen_waypoint[:2] *= self.metric_waypoint_spacing
+            
+            # CSV 로깅
+            if self.csv_logger:
+                self.csv_logger.log(
+                    timestamp=observation.timestamp,
+                    robot_position=observation.robot_position,
+                    robot_heading=observation.robot_heading,
+                    goal_position=observation.goal_position,
+                    goal_heading=observation.goal_heading,
+                    linear_vel=linear_vel,
+                    angular_vel=angular_vel,
+                    waypoint_dx=chosen_waypoint[0],
+                    waypoint_dy=chosen_waypoint[1],
+                    waypoint_hx=chosen_waypoint[2],
+                    waypoint_hy=chosen_waypoint[3],
+                )
+            
+            # cmd_vel 로깅 (여러 방법으로 출력 시도)
+            log_msg = (
+                f"[OmniVLA cmd_vel] linear={linear_vel:.4f} m/s, angular={angular_vel:.4f} rad/s | "
+                f"waypoint[{waypoint_select}]=(dx={chosen_waypoint[0]:.3f}, dy={chosen_waypoint[1]:.3f}, "
+                f"hx={chosen_waypoint[2]:.3f}, hy={chosen_waypoint[3]:.3f}) | "
+                f"robot_pos=({observation.robot_position[0]:.2f}, {observation.robot_position[1]:.2f}), "
+                f"goal_pos=({observation.goal_position[0]:.2f}, {observation.goal_position[1]:.2f})"
             )
+            LOGGER.info(log_msg)
+            # Isaac Sim이 stdout을 가로채는 경우를 대비해 print도 사용
+            print(log_msg, flush=True)
+            sys.stdout.flush()
+            sys.stderr.flush()
             return command
         except Exception as exc:  # pragma: no cover - 안전장치
             LOGGER.error("OmniVLA 추론 실패: %s", exc, exc_info=True)
+            sys.stdout.flush()
             return np.zeros(3, dtype=np.float32)
 
     # ---- Worker loop ------------------------------------------------------

@@ -1,0 +1,237 @@
+2025-11-26 21:25:35 - OmniVLASpotSimulation - INFO - ✓ Terminal logging to file: expr_data/251126_212535-omnivla_sim/terminal.log
+2025-11-26 21:25:35 - OmniVLASpotSimulation - INFO - Configuration saved: expr_data/251126_212535-omnivla_sim/config.json
+2025-11-26 21:25:35 - OmniVLASpotSimulation - INFO - CSV logging disabled
+2025-11-26 21:25:35 - OmniVLASpotSimulation - INFO - ✓ Ego camera render product initialized: 640×480
+2025-11-26 21:25:35 - OmniVLASpotSimulation - INFO - ✓ Top camera render product initialized: 800×800
+2025-11-26 21:25:36 - OmniVLASpotSimulation - INFO - Setup complete
+2025-11-26 21:25:36 - OmniVLASpotSimulation - INFO - Starting OmniVLA simulation...
+2025-11-26 21:25:36 - OmniVLASpotSimulation - INFO - Camera views displayed in Pygame window
+2025-11-26 21:25:36 - OmniVLASpotSimulation - INFO - Spot initialized
+2025-11-26 21:25:38 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.32 m
+2025-11-26 21:25:39 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.27 m
+2025-11-26 21:25:39 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.26 m
+2025-11-26 21:25:40 - OmniVLASpotSimulation - INFO - First keyboard command received - starting data saving
+2025-11-26 21:25:40 - OmniVLASpotSimulation - INFO - Experiment data saving started
+2025-11-26 21:25:40 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.28 m
+2025-11-26 21:25:41 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.30 m
+2025-11-26 21:25:41 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.29 m
+2025-11-26 21:25:41 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.25 m
+2025-11-26 21:25:42 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.20 m
+2025-11-26 21:25:42 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.16 m
+2025-11-26 21:25:43 - OmniVLASpotSimulation - INFO - [Performance] Physics: 13.890ms avg (0.585-864.048ms), 72.0 Hz | Render: 129.903ms avg (46.229-1140.713ms), 7.7 FPS | Frame: 129.919ms avg (46.241-1140.749ms), 7.7 FPS
+2025-11-26 21:25:43 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.13 m
+2025-11-26 21:25:43 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.11 m
+2025-11-26 21:25:44 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.10 m
+2025-11-26 21:25:44 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.10 m
+2025-11-26 21:25:45 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.09 m
+2025-11-26 21:25:46 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.06 m
+2025-11-26 21:25:46 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 10.00 m
+2025-11-26 21:25:47 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.96 m
+2025-11-26 21:25:47 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.92 m
+2025-11-26 21:25:48 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.88 m
+2025-11-26 21:25:49 - OmniVLASpotSimulation - INFO - [Performance] Physics: 11.700ms avg (0.672-474.831ms), 85.5 Hz | Render: 118.695ms avg (46.229-1140.713ms), 8.4 FPS | Frame: 118.711ms avg (46.241-1140.749ms), 8.4 FPS
+2025-11-26 21:25:49 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.85 m
+2025-11-26 21:25:50 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.82 m
+2025-11-26 21:25:50 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.79 m
+2025-11-26 21:25:51 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.74 m
+2025-11-26 21:25:51 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.70 m
+2025-11-26 21:25:52 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.66 m
+2025-11-26 21:25:52 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.63 m
+2025-11-26 21:25:53 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.59 m
+2025-11-26 21:25:53 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.55 m
+2025-11-26 21:25:54 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.51 m
+2025-11-26 21:25:54 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.817ms avg (0.702-421.336ms), 92.4 Hz | Render: 112.109ms avg (46.229-1140.713ms), 8.9 FPS | Frame: 112.125ms avg (46.241-1140.749ms), 8.9 FPS
+2025-11-26 21:25:54 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.46 m
+2025-11-26 21:25:54 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.42 m
+2025-11-26 21:25:55 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.37 m
+2025-11-26 21:25:56 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.33 m
+2025-11-26 21:25:56 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.29 m
+2025-11-26 21:25:57 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.25 m
+2025-11-26 21:25:57 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.20 m
+2025-11-26 21:25:58 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.15 m
+2025-11-26 21:25:59 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.10 m
+2025-11-26 21:26:00 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.06 m
+2025-11-26 21:26:00 - OmniVLASpotSimulation - INFO - [Performance] Physics: 11.661ms avg (0.982-438.830ms), 85.8 Hz | Render: 110.834ms avg (46.229-1140.713ms), 9.0 FPS | Frame: 110.850ms avg (46.241-1140.749ms), 9.0 FPS
+2025-11-26 21:26:00 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 9.02 m
+2025-11-26 21:26:00 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.98 m
+2025-11-26 21:26:01 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.94 m
+2025-11-26 21:26:01 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.89 m
+2025-11-26 21:26:02 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.84 m
+2025-11-26 21:26:03 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.79 m
+2025-11-26 21:26:03 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.75 m
+2025-11-26 21:26:04 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.71 m
+2025-11-26 21:26:04 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.68 m
+2025-11-26 21:26:05 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.64 m
+2025-11-26 21:26:06 - OmniVLASpotSimulation - INFO - [Performance] Physics: 11.229ms avg (0.842-346.056ms), 89.1 Hz | Render: 109.176ms avg (46.229-1140.713ms), 9.2 FPS | Frame: 109.192ms avg (46.241-1140.749ms), 9.2 FPS
+2025-11-26 21:26:06 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.58 m
+2025-11-26 21:26:06 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.54 m
+2025-11-26 21:26:07 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.50 m
+2025-11-26 21:26:07 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.47 m
+2025-11-26 21:26:08 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.44 m
+2025-11-26 21:26:09 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.42 m
+2025-11-26 21:26:09 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.38 m
+2025-11-26 21:26:10 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.34 m
+2025-11-26 21:26:10 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.31 m
+2025-11-26 21:26:11 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.28 m
+2025-11-26 21:26:11 - OmniVLASpotSimulation - INFO - [Performance] Physics: 11.424ms avg (0.929-398.446ms), 87.5 Hz | Render: 108.452ms avg (46.229-1140.713ms), 9.2 FPS | Frame: 108.467ms avg (46.241-1140.749ms), 9.2 FPS
+2025-11-26 21:26:11 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.26 m
+2025-11-26 21:26:12 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.25 m
+2025-11-26 21:26:12 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.24 m
+2025-11-26 21:26:13 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.21 m
+2025-11-26 21:26:14 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.18 m
+2025-11-26 21:26:14 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.15 m
+2025-11-26 21:26:15 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.12 m
+2025-11-26 21:26:15 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.10 m
+2025-11-26 21:26:16 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.08 m
+2025-11-26 21:26:16 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.05 m
+2025-11-26 21:26:17 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.710ms avg (0.781-474.573ms), 93.4 Hz | Render: 106.954ms avg (46.229-1140.713ms), 9.3 FPS | Frame: 106.970ms avg (46.241-1140.749ms), 9.3 FPS
+2025-11-26 21:26:17 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 8.01 m
+2025-11-26 21:26:17 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.97 m
+2025-11-26 21:26:18 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.94 m
+2025-11-26 21:26:18 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.91 m
+2025-11-26 21:26:19 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.89 m
+2025-11-26 21:26:19 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.87 m
+2025-11-26 21:26:20 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.84 m
+2025-11-26 21:26:20 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.80 m
+2025-11-26 21:26:21 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.76 m
+2025-11-26 21:26:22 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.72 m
+2025-11-26 21:26:22 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.653ms avg (0.782-267.889ms), 93.9 Hz | Render: 105.730ms avg (46.229-1140.713ms), 9.5 FPS | Frame: 105.746ms avg (46.241-1140.749ms), 9.5 FPS
+2025-11-26 21:26:22 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.69 m
+2025-11-26 21:26:22 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.67 m
+2025-11-26 21:26:23 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.64 m
+2025-11-26 21:26:23 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.61 m
+2025-11-26 21:26:24 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.57 m
+2025-11-26 21:26:25 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.53 m
+2025-11-26 21:26:25 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.50 m
+2025-11-26 21:26:26 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.47 m
+2025-11-26 21:26:26 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.45 m
+2025-11-26 21:26:27 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.43 m
+2025-11-26 21:26:27 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.971ms avg (0.821-373.785ms), 91.1 Hz | Render: 105.079ms avg (46.229-1140.713ms), 9.5 FPS | Frame: 105.094ms avg (46.241-1140.749ms), 9.5 FPS
+2025-11-26 21:26:27 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.39 m
+2025-11-26 21:26:28 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.35 m
+2025-11-26 21:26:29 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.31 m
+2025-11-26 21:26:29 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.28 m
+2025-11-26 21:26:29 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.26 m
+2025-11-26 21:26:30 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.23 m
+2025-11-26 21:26:30 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.21 m
+2025-11-26 21:26:31 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.18 m
+2025-11-26 21:26:31 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.14 m
+2025-11-26 21:26:32 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.10 m
+2025-11-26 21:26:32 - OmniVLASpotSimulation - INFO - [Performance] Physics: 9.316ms avg (0.703-322.192ms), 107.3 Hz | Render: 102.954ms avg (46.229-1140.713ms), 9.7 FPS | Frame: 102.970ms avg (46.241-1140.749ms), 9.7 FPS
+2025-11-26 21:26:32 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.07 m
+2025-11-26 21:26:33 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.04 m
+2025-11-26 21:26:33 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 7.02 m
+2025-11-26 21:26:34 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.99 m
+2025-11-26 21:26:34 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.96 m
+2025-11-26 21:26:35 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.92 m
+2025-11-26 21:26:35 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.89 m
+2025-11-26 21:26:35 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.85 m
+2025-11-26 21:26:36 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.83 m
+2025-11-26 21:26:36 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.80 m
+2025-11-26 21:26:37 - OmniVLASpotSimulation - INFO - [Performance] Physics: 9.655ms avg (0.767-381.854ms), 103.6 Hz | Render: 98.759ms avg (46.995-494.114ms), 10.1 FPS | Frame: 98.775ms avg (47.006-494.130ms), 10.1 FPS
+2025-11-26 21:26:37 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.77 m
+2025-11-26 21:26:38 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.73 m
+2025-11-26 21:26:38 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.69 m
+2025-11-26 21:26:39 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.66 m
+2025-11-26 21:26:39 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.63 m
+2025-11-26 21:26:40 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.60 m
+2025-11-26 21:26:40 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.58 m
+2025-11-26 21:26:41 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.55 m
+2025-11-26 21:26:42 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.51 m
+2025-11-26 21:26:42 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.46 m
+2025-11-26 21:26:43 - OmniVLASpotSimulation - INFO - [Performance] Physics: 11.251ms avg (0.801-430.017ms), 88.9 Hz | Render: 98.254ms avg (46.995-481.987ms), 10.2 FPS | Frame: 98.271ms avg (47.006-482.006ms), 10.2 FPS
+2025-11-26 21:26:43 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.43 m
+2025-11-26 21:26:43 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.40 m
+2025-11-26 21:26:43 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.37 m
+2025-11-26 21:26:44 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.35 m
+2025-11-26 21:26:44 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.32 m
+2025-11-26 21:26:45 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.28 m
+2025-11-26 21:26:46 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.24 m
+2025-11-26 21:26:46 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.20 m
+2025-11-26 21:26:47 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.17 m
+2025-11-26 21:26:47 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.14 m
+2025-11-26 21:26:48 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.605ms avg (0.993-375.369ms), 94.3 Hz | Render: 98.043ms avg (48.316-481.987ms), 10.2 FPS | Frame: 98.059ms avg (48.332-482.006ms), 10.2 FPS
+2025-11-26 21:26:48 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.12 m
+2025-11-26 21:26:49 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.08 m
+2025-11-26 21:26:49 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.04 m
+2025-11-26 21:26:50 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 6.00 m
+2025-11-26 21:26:50 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.96 m
+2025-11-26 21:26:51 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.93 m
+2025-11-26 21:26:51 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.90 m
+2025-11-26 21:26:52 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.87 m
+2025-11-26 21:26:53 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.83 m
+2025-11-26 21:26:53 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.79 m
+2025-11-26 21:26:54 - OmniVLASpotSimulation - INFO - [Performance] Physics: 11.842ms avg (0.979-396.240ms), 84.4 Hz | Render: 98.255ms avg (45.212-481.987ms), 10.2 FPS | Frame: 98.272ms avg (45.227-482.006ms), 10.2 FPS
+2025-11-26 21:26:54 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.75 m
+2025-11-26 21:26:54 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.71 m
+2025-11-26 21:26:55 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.68 m
+2025-11-26 21:26:55 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.65 m
+2025-11-26 21:26:56 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.62 m
+2025-11-26 21:26:56 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.57 m
+2025-11-26 21:26:57 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.53 m
+2025-11-26 21:26:57 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.49 m
+2025-11-26 21:26:58 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.45 m
+2025-11-26 21:26:58 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.42 m
+2025-11-26 21:26:59 - OmniVLASpotSimulation - INFO - [Performance] Physics: 9.918ms avg (0.761-347.186ms), 100.8 Hz | Render: 96.963ms avg (45.212-481.987ms), 10.3 FPS | Frame: 96.980ms avg (45.227-482.006ms), 10.3 FPS
+2025-11-26 21:26:59 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.39 m
+2025-11-26 21:26:59 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.35 m
+2025-11-26 21:27:00 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.31 m
+2025-11-26 21:27:00 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.26 m
+2025-11-26 21:27:01 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.23 m
+2025-11-26 21:27:02 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.19 m
+2025-11-26 21:27:02 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.15 m
+2025-11-26 21:27:03 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.13 m
+2025-11-26 21:27:03 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.09 m
+2025-11-26 21:27:03 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.04 m
+2025-11-26 21:27:04 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.227ms avg (0.894-423.193ms), 97.8 Hz | Render: 95.813ms avg (45.212-481.987ms), 10.4 FPS | Frame: 95.830ms avg (45.227-482.006ms), 10.4 FPS
+2025-11-26 21:27:04 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 5.00 m
+2025-11-26 21:27:04 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.96 m
+2025-11-26 21:27:05 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.92 m
+2025-11-26 21:27:05 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.89 m
+2025-11-26 21:27:06 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.86 m
+2025-11-26 21:27:06 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.82 m
+2025-11-26 21:27:06 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.78 m
+2025-11-26 21:27:07 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.73 m
+2025-11-26 21:27:07 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.70 m
+2025-11-26 21:27:08 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.66 m
+2025-11-26 21:27:08 - OmniVLASpotSimulation - INFO - [Performance] Physics: 9.026ms avg (0.833-282.142ms), 110.8 Hz | Render: 94.120ms avg (45.212-440.953ms), 10.6 FPS | Frame: 94.138ms avg (45.227-440.976ms), 10.6 FPS
+2025-11-26 21:27:08 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.63 m
+2025-11-26 21:27:09 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.61 m
+2025-11-26 21:27:09 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.57 m
+2025-11-26 21:27:10 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.53 m
+2025-11-26 21:27:10 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.49 m
+2025-11-26 21:27:11 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.46 m
+2025-11-26 21:27:11 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.44 m
+2025-11-26 21:27:12 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.42 m
+2025-11-26 21:27:12 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.39 m
+2025-11-26 21:27:13 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.36 m
+2025-11-26 21:27:14 - OmniVLASpotSimulation - INFO - [Performance] Physics: 10.430ms avg (0.745-431.573ms), 95.9 Hz | Render: 93.927ms avg (45.212-471.581ms), 10.6 FPS | Frame: 93.945ms avg (45.227-471.608ms), 10.6 FPS
+2025-11-26 21:27:14 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.32 m
+2025-11-26 21:27:14 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.29 m
+2025-11-26 21:27:15 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.26 m
+2025-11-26 21:27:15 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.30 m
+2025-11-26 21:27:16 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.33 m
+2025-11-26 21:27:16 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.37 m
+2025-11-26 21:27:16 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.41 m
+2025-11-26 21:27:17 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.45 m
+2025-11-26 21:27:17 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.49 m
+2025-11-26 21:27:18 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.53 m
+2025-11-26 21:27:18 - OmniVLASpotSimulation - INFO - [Performance] Physics: 9.700ms avg (0.901-358.679ms), 103.1 Hz | Render: 92.711ms avg (45.212-471.581ms), 10.8 FPS | Frame: 92.729ms avg (45.227-471.608ms), 10.8 FPS
+2025-11-26 21:27:18 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.57 m
+2025-11-26 21:27:19 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.60 m
+2025-11-26 21:27:20 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.63 m
+2025-11-26 21:27:20 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.67 m
+2025-11-26 21:27:21 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.70 m
+2025-11-26 21:27:21 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.72 m
+2025-11-26 21:27:22 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.75 m
+2025-11-26 21:27:22 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.78 m
+2025-11-26 21:27:25 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.81 m
+2025-11-26 21:27:25 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.84 m
+2025-11-26 21:27:25 - OmniVLASpotSimulation - INFO - [Performance] Physics: 13.896ms avg (0.652-1677.587ms), 72.0 Hz | Render: 97.002ms avg (45.212-1643.314ms), 10.3 FPS | Frame: 97.020ms avg (45.227-1643.343ms), 10.3 FPS
+2025-11-26 21:27:25 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.87 m
+2025-11-26 21:27:26 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.90 m
+2025-11-26 21:27:26 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.93 m
+2025-11-26 21:27:27 - OmniVLASpotSimulation - INFO - Robot <-> Goal L1 distance: 4.96 m
+2025-11-26 21:27:27 - OmniVLASpotSimulation - INFO - Pygame window closed - quitting...
+2025-11-26 21:27:28 - OmniVLASpotSimulation - INFO - CSV logging was disabled - no file to close
+2025-11-26 21:27:28 - OmniVLASpotSimulation - INFO - Cleanup complete

@@ -1,0 +1,86 @@
+{
+  "ground_color": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "wall_color": [
+    0.7,
+    0.7,
+    0.7
+  ],
+  "wall_height": 2.0,
+  "map_size": 10.0,
+  "ground_friction_static": 0.2,
+  "ground_friction_dynamic": 0.2,
+  "ground_restitution": 0.01,
+  "box_friction_static": 0.8,
+  "box_friction_dynamic": 0.7,
+  "box_restitution": 0.1,
+  "dome_light_intensity": 600.0,
+  "marker_radius": 0.3,
+  "goal_hemisphere_diameter": 1.0,
+  "object_type": "none",
+  "wall_depth_min": 0.3,
+  "wall_depth_max": 1.0,
+  "gate_y_offset_min": -2.0,
+  "gate_y_offset_max": 2.0,
+  "gap_min": 1.0,
+  "gap_max": 1.5,
+  "gate_location_min": 0.2,
+  "gate_location_max": 0.8,
+  "gate_color": [
+    0.5,
+    0.3,
+    0.1
+  ],
+  "start_position": [
+    3.8393221972744787,
+    1.9459427922356287
+  ],
+  "goal_position": [
+    -3.8581253652405874,
+    -2.8879167784213475
+  ],
+  "box_position": [
+    2.0,
+    0.0,
+    0.25
+  ],
+  "box_scale": [
+    1.0,
+    1.0,
+    0.5
+  ],
+  "box_mass": 5.0,
+  "box_color": [
+    0.6,
+    0.4,
+    0.2
+  ],
+  "robot_height": 0.8,
+  "randomize": true,
+  "random_seed": null,
+  "num_boxes": 8,
+  "box_min_separation": 1.5,
+  "max_vx": 2.0,
+  "max_vy": 2.0,
+  "max_yaw": 2.0,
+  "acc_vx": 5.0,
+  "acc_vy": 5.0,
+  "acc_yaw": 10.0,
+  "decay_vx": 0.7,
+  "decay_vy": 0.7,
+  "decay_yaw": 0.6,
+  "update_dt": 0.02,
+  "ego_camera_resolution": [
+    640,
+    480
+  ],
+  "top_camera_resolution": [
+    800,
+    800
+  ],
+  "top_camera_height": 10.0,
+  "_used_seed": 1734950531
+}
