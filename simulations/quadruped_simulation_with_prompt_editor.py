@@ -1,8 +1,8 @@
 """
-Isaac Sim Spot 환경과 OmniVLA 추론을 연결하는 시뮬레이션 스크립트.
+Isaac Sim Spot 환경과 OmniVLA 추론을 연결하는 시뮬레이션 스크립트 (언어 프롬프트 편집 기능 포함).
 
-기존 `quadruped_example.py` 환경을 재사용하되, 키보드 입력 대신
-OmniVLA 추론 스레드에서 공유 메모리를 통해 전달되는 명령을 사용한다.
+기존 `quadruped_simulation.py`를 기반으로 하되, 실행 중 언어 프롬프트를
+Pygame 창을 통해 실시간으로 수정할 수 있는 기능을 추가합니다.
 """
 
 from __future__ import annotations
@@ -16,8 +16,10 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
+from queue import Queue, Empty
 
 import numpy as np
+import pygame
 
 # ---------------------------------------------------------------------------
 # 모듈 경로 설정: Isaac Sim submodule + OmniVLA inference
@@ -56,6 +58,145 @@ if not LOGGER.handlers:
     )
     LOGGER.addHandler(handler)
     LOGGER.propagate = False  # 상위 로거로 전파 방지
+
+
+# -----------------------------------------------------------------------------
+# Pygame 텍스트 입력 창
+# -----------------------------------------------------------------------------
+class PromptEditorWindow:
+    """언어 프롬프트를 입력/수정할 수 있는 Pygame 창."""
+    
+    def __init__(self, initial_prompt: str = "", prompt_queue: Queue = None):
+        pygame.init()
+        self.width = 800
+        self.height = 200
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("OmniVLA Language Prompt Editor")
+        
+        self.font = pygame.font.Font(None, 32)
+        self.small_font = pygame.font.Font(None, 24)
+        self.input_text = initial_prompt
+        self.cursor_pos = len(self.input_text)
+        self.cursor_visible = True
+        self.cursor_timer = 0
+        
+        self.prompt_queue = prompt_queue
+        self.running = True
+        self.clock = pygame.time.Clock()
+        
+        # 배경색
+        self.bg_color = (30, 30, 30)
+        self.text_color = (255, 255, 255)
+        self.cursor_color = (255, 255, 0)
+        self.hint_color = (150, 150, 150)
+        
+    def update(self):
+        """창 업데이트 및 이벤트 처리."""
+        self.cursor_timer += self.clock.tick(30)
+        if self.cursor_timer > 500:  # 0.5초마다 커서 깜빡임
+            self.cursor_visible = not self.cursor_visible
+            self.cursor_timer = 0
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    # Enter 키: 프롬프트 업데이트
+                    if self.prompt_queue is not None:
+                        self.prompt_queue.put(self.input_text)
+                        LOGGER.info(f"프롬프트 업데이트: {self.input_text}")
+                        sys.stdout.flush()
+                elif event.key == pygame.K_BACKSPACE:
+                    if self.cursor_pos > 0:
+                        self.input_text = (
+                            self.input_text[:self.cursor_pos-1] + 
+                            self.input_text[self.cursor_pos:]
+                        )
+                        self.cursor_pos -= 1
+                elif event.key == pygame.K_DELETE:
+                    if self.cursor_pos < len(self.input_text):
+                        self.input_text = (
+                            self.input_text[:self.cursor_pos] + 
+                            self.input_text[self.cursor_pos+1:]
+                        )
+                elif event.key == pygame.K_LEFT:
+                    self.cursor_pos = max(0, self.cursor_pos - 1)
+                elif event.key == pygame.K_RIGHT:
+                    self.cursor_pos = min(len(self.input_text), self.cursor_pos + 1)
+                elif event.key == pygame.K_HOME:
+                    self.cursor_pos = 0
+                elif event.key == pygame.K_END:
+                    self.cursor_pos = len(self.input_text)
+                elif event.key == pygame.K_ESCAPE:
+                    self.running = False
+                elif event.unicode:
+                    # 일반 텍스트 입력
+                    self.input_text = (
+                        self.input_text[:self.cursor_pos] + 
+                        event.unicode + 
+                        self.input_text[self.cursor_pos:]
+                    )
+                    self.cursor_pos += 1
+        
+        # 화면 그리기
+        self.screen.fill(self.bg_color)
+        
+        # 제목
+        title = self.small_font.render("Language Prompt Editor (Press Enter to update)", True, self.hint_color)
+        self.screen.blit(title, (10, 10))
+        
+        # 입력 텍스트 영역
+        text_y = 50
+        padding = 10
+        
+        # 텍스트 렌더링 (커서 위치 기준으로 앞/뒤 분리)
+        text_before = self.input_text[:self.cursor_pos]
+        text_after = self.input_text[self.cursor_pos:]
+        
+        # 텍스트가 화면을 벗어나면 스크롤
+        text_surface = self.font.render(self.input_text, True, self.text_color)
+        text_width = text_surface.get_width()
+        max_width = self.width - 2 * padding
+        
+        if text_width > max_width:
+            # 커서가 오른쪽 끝에 가까우면 스크롤
+            cursor_x = self.font.size(text_before)[0]
+            if cursor_x > max_width - 50:
+                # 앞부분을 잘라서 표시
+                visible_start = max(0, len(text_before) - 50)
+                visible_text = self.input_text[visible_start:]
+                text_before = visible_text[:self.cursor_pos - visible_start]
+                text_after = visible_text[self.cursor_pos - visible_start:]
+        
+        # 텍스트 그리기
+        if text_before:
+            before_surface = self.font.render(text_before, True, self.text_color)
+            self.screen.blit(before_surface, (padding, text_y))
+            cursor_x = padding + before_surface.get_width()
+        else:
+            cursor_x = padding
+        
+        # 커서 그리기
+        if self.cursor_visible:
+            cursor_surface = self.font.render("|", True, self.cursor_color)
+            self.screen.blit(cursor_surface, (cursor_x, text_y))
+        
+        # 커서 이후 텍스트
+        if text_after:
+            after_surface = self.font.render(text_after, True, self.text_color)
+            self.screen.blit(after_surface, (cursor_x + 5, text_y))
+        
+        # 힌트 텍스트
+        hint = self.small_font.render("Current prompt will be applied to OmniVLA model", True, self.hint_color)
+        self.screen.blit(hint, (10, self.height - 30))
+        
+        pygame.display.flip()
+    
+    def close(self):
+        """창 닫기."""
+        self.running = False
+        pygame.quit()
 
 
 # -----------------------------------------------------------------------------
@@ -319,12 +460,32 @@ def main():
     # CSV 로거 생성
     csv_logger = OmniVLACSVLogger(csv_path)
     
+    # 초기 언어 프롬프트
+    initial_prompt = "avoid box shaped obstacle and move toward blue sphere"
+    
+    # 프롬프트 업데이트를 위한 Queue
+    prompt_queue = Queue()
+    
+    # Pygame 프롬프트 편집 창 생성 및 스레드 시작
+    prompt_editor = PromptEditorWindow(initial_prompt=initial_prompt, prompt_queue=prompt_queue)
+    
+    def prompt_editor_loop():
+        """프롬프트 편집 창 루프 (별도 스레드에서 실행)."""
+        while prompt_editor.running and not shutdown_requested.is_set():
+            prompt_editor.update()
+        prompt_editor.close()
+    
+    prompt_editor_thread = threading.Thread(target=prompt_editor_loop, daemon=True)
+    prompt_editor_thread.start()
+    LOGGER.info("프롬프트 편집 창 시작됨")
+    sys.stdout.flush()
+    
     LOGGER.info("[2/6] OmniVLA 모델 로딩 중... (시간이 걸릴 수 있습니다)")
     sys.stdout.flush()
     try:
         omnivla_cfg = SimOmniVLAConfig(
             goal_image_path=str(REPO_ROOT / "inference" / "frame211-56.597-ego.jpg"),
-            lan_inst_prompt="move toward blue sphere",
+            lan_inst_prompt=initial_prompt,
         )
         LOGGER.info("[2/6] OmniVLA 설정 완료, 모델 인스턴스 생성 중...")
         sys.stdout.flush()
@@ -338,9 +499,36 @@ def main():
 
     LOGGER.info("[3/6] OmniVLA 추론 스레드 시작 중...")
     sys.stdout.flush()
+    
+    # 프롬프트 업데이트를 처리하는 래퍼 함수
+    def omnivla_serve_with_prompt_updates():
+        """프롬프트 업데이트를 처리하면서 OmniVLA 추론 실행."""
+        while not stop_event.is_set():
+            # 프롬프트 업데이트 체크
+            try:
+                new_prompt = prompt_queue.get_nowait()
+                # Inference 인스턴스의 lan_inst_prompt 업데이트
+                if hasattr(omnivla_controller, 'inference') and omnivla_controller.inference:
+                    omnivla_controller.inference.lan_inst_prompt = new_prompt
+                    LOGGER.info(f"프롬프트가 업데이트되었습니다: {new_prompt}")
+                    sys.stdout.flush()
+            except Empty:
+                pass
+            
+            # 일반 추론 루프
+            has_obs = shared_channels.wait_for_observation(timeout=0.1)
+            if not has_obs:
+                continue
+
+            observation = shared_channels.read_observation()
+            if observation is None:
+                continue
+
+            command = omnivla_controller.compute_command(observation)
+            shared_channels.write_command(command)
+    
     omnivla_thread = threading.Thread(
-        target=omnivla_controller.serve_forever,
-        args=(shared_channels, stop_event),
+        target=omnivla_serve_with_prompt_updates,
         daemon=True,
     )
     omnivla_thread.start()
@@ -389,6 +577,11 @@ def main():
         # 안전한 종료 순서
         stop_event.set()
         shutdown_requested.set()
+
+        # 프롬프트 편집 창 종료
+        prompt_editor.running = False
+        if prompt_editor_thread.is_alive():
+            prompt_editor_thread.join(timeout=1.0)
 
         # OmniVLA 스레드 종료 대기
         if omnivla_thread.is_alive():
@@ -443,3 +636,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
