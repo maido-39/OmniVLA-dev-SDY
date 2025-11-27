@@ -188,7 +188,7 @@ class Inference:
             device_id=device_id,
             use_l1_regression=True,
             use_diffusion=False,
-            use_film=False,
+            use_film=True,
             num_patches=NUM_PATCHES,
             compute_diffusion_l1=False,
             num_diffusion_steps_train=None,

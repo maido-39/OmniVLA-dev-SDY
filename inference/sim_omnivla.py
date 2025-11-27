@@ -248,6 +248,7 @@ class SimOmniVLAConfig:
     angular_clip: Tuple[float, float] = (-1.0, 1.0)
     max_linear: float = 0.3
     max_yaw: float = 0.3
+    yaw_gain: float = 1.5  # 각속도 반응 강화를 위한 배율 (기본값 1.5)
 
 
 class SimOmniVLAController:
@@ -382,15 +383,18 @@ class SimOmniVLAController:
 
         eps = 1e-8
         dt = 1 / 3
+        # Yaw gain: 각속도 반응을 강화하기 위한 배율 (기본값 1.5)
+        yaw_gain = getattr(self.config, 'yaw_gain', 1.5)
+        
         if abs(dx) < eps and abs(dy) < eps:
             linear_vel = 0.0
-            angular_vel = clip_angle_fn(math.atan2(hy, hx)) / dt
+            angular_vel = clip_angle_fn(math.atan2(hy, hx)) / dt * yaw_gain
         elif abs(dx) < eps:
             linear_vel = 0.0
-            angular_vel = math.copysign(math.pi / (2 * dt), dy)
+            angular_vel = math.copysign(math.pi / (2 * dt), dy) * yaw_gain
         else:
             linear_vel = dx / dt
-            angular_vel = math.atan(dy / dx) / dt
+            angular_vel = math.atan(dy / dx) / dt * yaw_gain
 
         linear_vel = float(
             np.clip(linear_vel, self.config.linear_clip[0], self.config.linear_clip[1])

@@ -32,7 +32,10 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
 # Isaac Sim 런타임 및 Spot 환경 로딩
-from quadruped_example import DEFAULT_CONFIG, SpotSimulation, simulation_app  # type: ignore  # noqa: E402
+from quadruped_example import DEFAULT_CONFIG, SpotSimulation, simulation_app  # type: ignore  # noqa: E402DEFAULT_CONFIG
+
+# num_box number modification
+DEFAULT_CONFIG["num_boxes"] = 2
 
 # OmniVLA 추론 래퍼
 from inference.sim_omnivla import (  # noqa: E402
@@ -324,7 +327,8 @@ def main():
     try:
         omnivla_cfg = SimOmniVLAConfig(
             goal_image_path=str(REPO_ROOT / "inference" / "frame211-56.597-ego.jpg"),
-            lan_inst_prompt="move toward blue sphere",
+            lan_inst_prompt="XXXX",
+            # lan_inst_prompt="move toward blue sphere",
         )
         LOGGER.info("[2/6] OmniVLA 설정 완료, 모델 인스턴스 생성 중...")
         sys.stdout.flush()
