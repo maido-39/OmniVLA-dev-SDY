@@ -356,7 +356,7 @@ def main():
     csv_logger = OmniVLACSVLogger(csv_path)
     
     # 초기 언어 프롬프트
-    initial_prompt = "stop"
+    initial_prompt = "move toward blue ball with avoiding orange wall"
     
     # 프롬프트 파일에 초기 프롬프트 저장
     PROMPT_FILE.parent.mkdir(exist_ok=True, parents=True)
@@ -449,7 +449,7 @@ def main():
         experiment_name=experiment_name,
         enable_csv_logging=False,
         enable_image_saving=False,
-        object_type="box",
+        object_type="gate",
     )
     
     # 초기 프롬프트 설정

@@ -44,9 +44,16 @@ This repository includes integration with NVIDIA Isaac Sim for simulating OmniVL
 
 1. **Start Isaac Sim** and ensure it's properly configured.
 
-2. **Run the simulation**:
+2. **Run the simulation** (choose one):
+   
+   **Basic simulation** (without prompt editing):
    ```bash
    python simulations/quadruped_simulation.py
+   ```
+   
+   **Simulation with real-time prompt editing**:
+   ```bash
+   python simulations/quadruped_simulation_with_prompt_editor.py
    ```
 
 3. **Simulation Features**:
@@ -55,6 +62,10 @@ This repository includes integration with NVIDIA Isaac Sim for simulating OmniVL
    - Real-time visualization with Pygame (ego and top-down camera views)
    - Automatic CSV logging of observations, actions, and commands
    - Automatic visualization generation upon simulation completion
+   - **Real-time language prompt editing** (in `quadruped_simulation_with_prompt_editor.py`):
+     - Edit `sim_data/current_prompt.txt` during simulation to update the language prompt
+     - Changes are automatically detected and applied to the OmniVLA model
+     - Terminal notifications show when prompts are updated
 
 4. **Data Output**:
    - Simulation data is saved to `sim_data/YYYY-MM-DD_HH-MM-SS-omnivla_sim/`
@@ -70,9 +81,25 @@ This repository includes integration with NVIDIA Isaac Sim for simulating OmniVL
 
 #### Configuration
 
-- Modify goal image and language prompt in `simulations/quadruped_simulation.py` (around line 327-328)
+**Basic Simulation** (`quadruped_simulation.py`):
+- Modify goal image and language prompt in the script (around line 327-328)
 - Adjust simulation parameters in `extern/isaacsim-spot-remotecontroldemo/quadruped_example.py` (DEFAULT_CONFIG)
-- Camera settings, robot limits, and environment parameters can be customized
+
+**Simulation with Prompt Editor** (`quadruped_simulation_with_prompt_editor.py`):
+- Initial language prompt is set in the script (around line 359)
+- **Real-time prompt editing**: Edit `sim_data/current_prompt.txt` during simulation
+- The file is automatically created at startup with the initial prompt
+- Changes to the file are detected and applied automatically
+- Terminal output shows prompt update notifications
+
+**Yaw Response Tuning**:
+- Adjust `yaw_gain` parameter in `SimOmniVLAConfig` to control angular velocity response
+- Default: `1.5`, higher values (e.g., `2.0`, `2.5`) increase yaw sensitivity
+- Example: `yaw_gain=2.5` in `quadruped_simulation_with_prompt_editor.py` (around line 383)
+
+**Other Settings**:
+- Camera settings, robot limits, and environment parameters can be customized in `extern/isaacsim-spot-remotecontroldemo/quadruped_example.py` (DEFAULT_CONFIG)
+- Number of boxes: Modify `DEFAULT_CONFIG["num_boxes"]` in the simulation script
 
 #### Notes
 
@@ -136,7 +163,7 @@ In our training setup, we use 8 Nvidia H100 GPUs (80 GB each) across 8 nodes. Th
 ### Acknowledgement
 We implement our ideas and design choices on top of the pretrained checkpoints. Our work builds upon the [OpenVLA-OFT](https://openvla-oft.github.io/) codebase, with additional code added to create OmniVLA. As such, our implementation leverages many components of the OpenVLA-OFT codebase. We sincerely appreciate the effort and contributions of the OpenVLA-OFT team!
 
-**Isaac Sim Integration**: The simulation environment is based on the Isaac Sim Spot Remote Control Demo, which is included as a submodule (`extern/isaacsim-spot-remotecontroldemo`). The Isaac Sim code is subject to NVIDIA's license terms. The OmniVLA integration code (`simulations/quadruped_simulation.py`, `simulations/visualize_simulation.py`, `inference/sim_omnivla.py`) is released under the MIT license as part of this repository.
+**Isaac Sim Integration**: The simulation environment is based on the Isaac Sim Spot Remote Control Demo, which is included as a submodule (`extern/isaacsim-spot-remotecontroldemo`). The Isaac Sim code is subject to NVIDIA's license terms. The OmniVLA integration code (`simulations/quadruped_simulation.py`, `simulations/quadruped_simulation_with_prompt_editor.py`, `simulations/visualize_simulation.py`, `inference/sim_omnivla.py`) is released under the MIT license as part of this repository.
 
 ## Citing
 ```
@@ -159,12 +186,16 @@ The following components were added by maido-39 to enable OmniVLA simulation wit
 
 - **Simulation Integration** (`simulations/quadruped_simulation.py`): Integration of OmniVLA with NVIDIA Isaac Sim for quadruped robot (Spot) simulation, including shared memory communication, multi-threaded inference, and real-time visualization.
 
-- **OmniVLA Simulation Wrapper** (`inference/sim_omnivla.py`): Wrapper class for running OmniVLA inference in simulation environments, with shared memory channels for observation and command exchange.
+- **Simulation with Prompt Editor** (`simulations/quadruped_simulation_with_prompt_editor.py`): Enhanced simulation script with real-time language prompt editing capability. Allows users to modify the language prompt during simulation by editing a text file, with automatic detection and application of changes.
+
+- **OmniVLA Simulation Wrapper** (`inference/sim_omnivla.py`): Wrapper class for running OmniVLA inference in simulation environments, with shared memory channels for observation and command exchange. Includes configurable `yaw_gain` parameter for tuning angular velocity response.
 
 - **Simulation Visualization** (`simulations/visualize_simulation.py`): Comprehensive visualization tools for analyzing simulation results, including trajectory plots, velocity commands, and performance metrics.
 
 - **CSV Data Logging**: Automatic logging of observations, actions, velocity commands, and waypoints during simulation runs.
 
 - **Shared Memory Communication System**: High-performance inter-thread communication for real-time data exchange between Isaac Sim and OmniVLA inference threads.
+
+- **File-based Prompt Editing**: Real-time language prompt modification system that monitors `sim_data/current_prompt.txt` and automatically applies changes to the OmniVLA model during simulation.
 
 These additions are released under the MIT license as part of this repository.
