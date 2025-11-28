@@ -207,7 +207,7 @@ class Inference:
 
         # PD controller
         EPS = 1e-8
-        DT = 1 / 3
+        DT = 1 / 4
         if np.abs(dx) < EPS and np.abs(dy) < EPS:
             linear_vel_value = 0
             angular_vel_value = 1.0 * clip_angle(np.arctan2(hy, hx)) / DT

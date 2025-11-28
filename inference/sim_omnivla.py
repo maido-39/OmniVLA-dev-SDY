@@ -16,7 +16,7 @@ import time
 from dataclasses import dataclass
 from multiprocessing import shared_memory
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import numpy as np
 from PIL import Image
@@ -270,6 +270,14 @@ class SimOmniVLAController:
         LOGGER.info("  → InferenceConfig 생성 중...")
         sys.stdout.flush()
         self.inference_cfg = run_module.InferenceConfig()
+        
+        # vla_path를 절대 경로로 변환 (상대 경로 문제 해결)
+        if self.inference_cfg.vla_path.startswith("./"):
+            # REPO_ROOT 기준으로 절대 경로 생성
+            REPO_ROOT = Path(__file__).parent.parent
+            vla_path_relative = self.inference_cfg.vla_path[2:]  # "./" 제거
+            self.inference_cfg.vla_path = str(REPO_ROOT / vla_path_relative)
+        
         LOGGER.info(f"  → 모델 경로: {self.inference_cfg.vla_path}")
         LOGGER.info("  → 모델 로딩 중... (GPU 메모리 할당 및 가중치 로딩, 시간이 걸릴 수 있습니다)")
         sys.stdout.flush()
@@ -422,7 +430,14 @@ class SimOmniVLAController:
             angular_vel_limit = maxw * math.copysign(1.0, angular_vel)
         return linear_vel_limit, angular_vel_limit
 
-    def compute_command(self, observation: SimulationObservation) -> np.ndarray:
+    def compute_command(self, observation: SimulationObservation) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        명령 계산 및 waypoints 반환.
+        
+        Returns:
+            command: [linear_vel, 0.0, angular_vel]
+            waypoints: 예측된 waypoints (batch, num_waypoints, 4)
+        """
         try:
             self.inference.goal_utm = observation.goal_position[:2]
             self.inference.goal_compass = observation.goal_heading
@@ -467,11 +482,11 @@ class SimOmniVLAController:
             print(log_msg, flush=True)
             sys.stdout.flush()
             sys.stderr.flush()
-            return command
+            return command, waypoints
         except Exception as exc:  # pragma: no cover - 안전장치
             LOGGER.error("OmniVLA 추론 실패: %s", exc, exc_info=True)
             sys.stdout.flush()
-            return np.zeros(3, dtype=np.float32)
+            return np.zeros(3, dtype=np.float32), np.zeros((1, 8, 4), dtype=np.float32)
 
     # ---- Worker loop ------------------------------------------------------
     def serve_forever(

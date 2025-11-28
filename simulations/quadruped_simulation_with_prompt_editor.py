@@ -19,6 +19,7 @@ from pathlib import Path
 from queue import Queue, Empty
 
 import numpy as np
+# matplotlib 백엔드는 시각화 스레드에서 설정 (Isaac Sim과의 충돌 방지)
 
 # ---------------------------------------------------------------------------
 # 모듈 경로 설정: Isaac Sim submodule + OmniVLA inference
@@ -37,6 +38,16 @@ from quadruped_example import DEFAULT_CONFIG, SpotSimulation, simulation_app  # 
 
 # num_box number modification
 DEFAULT_CONFIG["num_boxes"] = 2
+
+# -----------------------------------------------------------------------------
+# 시뮬레이션 설정 (Configuration)
+# -----------------------------------------------------------------------------
+# 초기 언어 프롬프트 설정
+INITIAL_PROMPT = "stop at blue sphere"
+OBJECT_TYPE = "box"
+
+# Trajectory 시각화 설정
+ENABLE_TRAJECTORY_VISUALIZATION = True  # True로 설정하면 trajectory가 top view에 표시됨
 
 # OmniVLA 추론 래퍼
 from inference.sim_omnivla import (  # noqa: E402
@@ -66,6 +77,240 @@ if not LOGGER.handlers:
 # 파일 기반 프롬프트 업데이트
 # -----------------------------------------------------------------------------
 PROMPT_FILE = REPO_ROOT / "sim_data" / "current_prompt.txt"
+
+
+# -----------------------------------------------------------------------------
+# Trajectory Visualizer
+# -----------------------------------------------------------------------------
+class TrajectoryVisualizer:
+    """실시간 trajectory 예측을 시각화하는 클래스."""
+    
+    def __init__(self, enabled: bool = True):
+        self.enabled = enabled
+        self.fig = None
+        self.ax = None
+        self.anim = None
+        self.trajectory_queue = Queue()
+        self.robot_pos_queue = Queue()
+        self.goal_pos_queue = Queue()
+        self.running = False
+        self.thread = None
+        self._plot_initialized = False
+        self._plt = None  # matplotlib.pyplot을 나중에 로드
+        self._cv2 = None  # OpenCV 참조
+        # 초기화는 스레드에서 수행 (Isaac Sim과의 충돌 방지)
+    
+    def _init_plot(self):
+        """matplotlib 플롯 초기화 (스레드에서 호출)."""
+        try:
+            import matplotlib
+            # Isaac Sim 환경에서는 Agg 백엔드 사용 (GUI 없이 이미지 생성)
+            # OpenCV로 표시할 예정
+            try:
+                matplotlib.use('Agg')  # GUI 없는 백엔드
+                LOGGER.info("matplotlib 백엔드 설정: Agg (OpenCV로 표시)")
+            except Exception as e:
+                LOGGER.warning(f"matplotlib 백엔드 설정 실패: {e}")
+                self.enabled = False
+                return
+            
+            import matplotlib.pyplot as plt
+            self._plt = plt  # 참조 저장
+            self.fig, self.ax = plt.subplots(figsize=(10, 10))
+            self.ax.set_xlabel('X (m)')
+            self.ax.set_ylabel('Y (m)')
+            self.ax.set_title('OmniVLA Trajectory Prediction')
+            self.ax.grid(True, alpha=0.3)
+            self.ax.set_aspect('equal')
+            self._plot_initialized = True
+            
+            # OpenCV 창 초기화 시도
+            try:
+                import cv2
+                self._cv2 = cv2
+                cv2.namedWindow('Trajectory Visualization', cv2.WINDOW_NORMAL)
+                cv2.resizeWindow('Trajectory Visualization', 800, 800)
+                LOGGER.info("OpenCV 창 초기화 완료")
+            except ImportError:
+                LOGGER.warning("OpenCV가 설치되지 않았습니다. 시각화가 비활성화됩니다.")
+                self.enabled = False
+            except Exception as e:
+                LOGGER.warning(f"OpenCV 창 초기화 실패: {e}. 시각화가 비활성화됩니다.")
+                self.enabled = False
+        except Exception as e:
+            LOGGER.error(f"플롯 초기화 실패: {e}")
+            self.enabled = False
+        
+    def start(self):
+        """시각화 스레드 시작."""
+        if not self.enabled:
+            return
+        
+        self.running = True
+        self.thread = threading.Thread(target=self._visualization_loop, daemon=True)
+        self.thread.start()
+        LOGGER.info("Trajectory 시각화 시작됨")
+    
+    def stop(self):
+        """시각화 스레드 종료."""
+        self.running = False
+        if self.thread:
+            self.thread.join(timeout=1.0)
+        if self.fig and self._plt is not None:
+            try:
+                self._plt.close(self.fig)
+            except Exception:
+                pass
+        LOGGER.info("Trajectory 시각화 종료됨")
+    
+    def update_trajectory(self, waypoints: np.ndarray, robot_position: np.ndarray, 
+                          robot_heading: float, goal_position: np.ndarray):
+        """새로운 trajectory 데이터 업데이트."""
+        if not self.enabled:
+            return
+        
+        try:
+            # Queue에 최신 데이터만 유지 (오래된 데이터 제거)
+            while not self.trajectory_queue.empty():
+                try:
+                    self.trajectory_queue.get_nowait()
+                except Empty:
+                    break
+            
+            self.trajectory_queue.put_nowait({
+                'waypoints': waypoints.copy(),
+                'robot_position': robot_position.copy(),
+                'robot_heading': robot_heading,
+                'goal_position': goal_position.copy()
+            })
+        except Exception as e:
+            LOGGER.warning(f"Trajectory 업데이트 실패: {e}")
+    
+    def _visualization_loop(self):
+        """시각화 루프 (별도 스레드에서 실행)."""
+        if not self.enabled:
+            return
+        
+        # 스레드에서 플롯 초기화 (Isaac Sim과의 충돌 방지)
+        if not self._plot_initialized:
+            self._init_plot()
+        
+        if not self.enabled or self.fig is None:
+            LOGGER.warning("Trajectory 시각화 초기화 실패 - 비활성화됨")
+            return
+        
+        try:
+            if self._plt is None:
+                import matplotlib.pyplot as plt
+                self._plt = plt
+            plt = self._plt
+            cv2 = self._cv2
+            
+            while self.running:
+                try:
+                    # 최신 trajectory 데이터 가져오기
+                    data = None
+                    try:
+                        data = self.trajectory_queue.get_nowait()
+                    except Empty:
+                        pass
+                    
+                    if data is None:
+                        time.sleep(0.1)
+                        continue
+                    
+                    waypoints = data['waypoints']
+                    robot_pos = data['robot_position']
+                    robot_heading = data['robot_heading']
+                    goal_pos = data['goal_position']
+                    
+                    # Waypoints를 전역 좌표로 변환
+                    # waypoints는 (batch, num_waypoints, 4) 형태: [dx, dy, hx, hy]
+                    # dx, dy는 로봇 좌표계에서의 상대 위치 (미터 단위)
+                    metric_waypoint_spacing = 0.1  # sim_omnivla.py에서 사용하는 값
+                    
+                    # 로봇 좌표계를 전역 좌표계로 변환
+                    cos_h = math.cos(robot_heading)
+                    sin_h = math.sin(robot_heading)
+                    
+                    # Waypoint 전역 좌표 계산
+                    global_waypoints = []
+                    for i in range(waypoints.shape[1]):
+                        wp = waypoints[0, i]  # (4,)
+                        dx = wp[0] * metric_waypoint_spacing
+                        dy = wp[1] * metric_waypoint_spacing
+                        
+                        # 로봇 좌표계 → 전역 좌표계 변환
+                        global_x = robot_pos[0] + dx * cos_h - dy * sin_h
+                        global_y = robot_pos[1] + dx * sin_h + dy * cos_h
+                        global_waypoints.append([global_x, global_y])
+                    
+                    global_waypoints = np.array(global_waypoints)
+                    
+                    # 플롯 업데이트
+                    self.ax.clear()
+                    self.ax.set_xlabel('X (m)')
+                    self.ax.set_ylabel('Y (m)')
+                    self.ax.set_title('OmniVLA Trajectory Prediction')
+                    self.ax.grid(True, alpha=0.3)
+                    self.ax.set_aspect('equal')
+                    
+                    # Trajectory 라인 그리기
+                    if len(global_waypoints) > 0:
+                        # 로봇 위치에서 첫 waypoint까지
+                        trajectory_x = [robot_pos[0]] + global_waypoints[:, 0].tolist()
+                        trajectory_y = [robot_pos[1]] + global_waypoints[:, 1].tolist()
+                        self.ax.plot(trajectory_x, trajectory_y, 'b-', linewidth=2, alpha=0.7, label='Predicted Trajectory')
+                        self.ax.plot(trajectory_x, trajectory_y, 'bo', markersize=6, alpha=0.5)
+                    
+                    # 로봇 위치 표시
+                    self.ax.plot(robot_pos[0], robot_pos[1], 'go', markersize=12, label='Robot')
+                    # 로봇 heading 방향 표시
+                    arrow_length = 0.5
+                    self.ax.arrow(robot_pos[0], robot_pos[1], 
+                                 arrow_length * cos_h, arrow_length * sin_h,
+                                 head_width=0.2, head_length=0.15, fc='green', ec='green')
+                    
+                    # 목표 위치 표시
+                    self.ax.plot(goal_pos[0], goal_pos[1], 'ro', markersize=12, label='Goal')
+                    
+                    # 범례
+                    self.ax.legend(loc='upper right')
+                    
+                    # 축 범위 자동 조정
+                    if len(global_waypoints) > 0:
+                        all_x = [robot_pos[0], goal_pos[0]] + global_waypoints[:, 0].tolist()
+                        all_y = [robot_pos[1], goal_pos[1]] + global_waypoints[:, 1].tolist()
+                        margin = 2.0
+                        self.ax.set_xlim(min(all_x) - margin, max(all_x) + margin)
+                        self.ax.set_ylim(min(all_y) - margin, max(all_y) + margin)
+                    
+                    # matplotlib figure를 이미지로 변환
+                    self.fig.canvas.draw()
+                    # RGB 이미지로 변환
+                    buf = self.fig.canvas.buffer_rgba()
+                    img = np.asarray(buf)
+                    # RGBA -> BGR (OpenCV 형식)
+                    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
+                    
+                    # OpenCV 창에 표시
+                    cv2.imshow('Trajectory Visualization', img_bgr)
+                    cv2.waitKey(1)  # 이벤트 처리 (non-blocking)
+                    
+                    time.sleep(0.05)  # 업데이트 주기
+                    
+                except Exception as e:
+                    LOGGER.warning(f"시각화 업데이트 오류: {e}")
+                    time.sleep(0.1)
+        except Exception as e:
+            LOGGER.error(f"시각화 루프 오류: {e}", exc_info=True)
+        finally:
+            try:
+                # OpenCV 창 닫기
+                if hasattr(self, '_cv2') and self._cv2 is not None:
+                    self._cv2.destroyAllWindows()
+            except Exception:
+                pass
 
 
 # -----------------------------------------------------------------------------
@@ -157,7 +402,7 @@ class SharedMemoryCommandController:
 # Isaac Sim wrapper
 # -----------------------------------------------------------------------------
 class OmniVLASpotSimulation(SpotSimulation):
-    def __init__(self, shared_channels: SharedMemoryChannels, shutdown_event=None, csv_logger=None, prompt_queue=None, *args, **kwargs):
+    def __init__(self, shared_channels: SharedMemoryChannels, shutdown_event=None, csv_logger=None, prompt_queue=None, trajectory_visualizer=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shared_channels = shared_channels
         self._last_obs_publish = 0.0
@@ -166,6 +411,7 @@ class OmniVLASpotSimulation(SpotSimulation):
         self.csv_logger = csv_logger  # CSV 로거 인스턴스
         self.prompt_queue = prompt_queue  # 프롬프트 업데이트 큐
         self.current_prompt = ""  # 현재 프롬프트 저장
+        self.trajectory_visualizer = trajectory_visualizer  # Trajectory 시각화기
 
     def setup(self):
         super().setup()
@@ -355,8 +601,13 @@ def main():
     # CSV 로거 생성
     csv_logger = OmniVLACSVLogger(csv_path)
     
-    # 초기 언어 프롬프트
-    initial_prompt = "move toward blue ball with avoiding orange wall"
+    # Trajectory 시각화기 생성
+    trajectory_visualizer = TrajectoryVisualizer(enabled=ENABLE_TRAJECTORY_VISUALIZATION)
+    if trajectory_visualizer.enabled:
+        trajectory_visualizer.start()
+    
+    # 초기 언어 프롬프트 (상단 CONFIG에서 가져옴)
+    initial_prompt = INITIAL_PROMPT
     
     # 프롬프트 파일에 초기 프롬프트 저장
     PROMPT_FILE.parent.mkdir(exist_ok=True, parents=True)
@@ -428,8 +679,17 @@ def main():
             if observation is None:
                 continue
 
-            command = omnivla_controller.compute_command(observation)
+            command, waypoints = omnivla_controller.compute_command(observation)
             shared_channels.write_command(command)
+            
+            # Trajectory 시각화 업데이트
+            if trajectory_visualizer and trajectory_visualizer.enabled:
+                trajectory_visualizer.update_trajectory(
+                    waypoints=waypoints,
+                    robot_position=observation.robot_position,
+                    robot_heading=observation.robot_heading,
+                    goal_position=observation.goal_position
+                )
     
     omnivla_thread = threading.Thread(
         target=omnivla_serve_with_prompt_updates,
@@ -446,10 +706,11 @@ def main():
         shutdown_event=shutdown_requested,
         csv_logger=csv_logger,
         prompt_queue=prompt_queue,
+        trajectory_visualizer=trajectory_visualizer,
         experiment_name=experiment_name,
         enable_csv_logging=False,
         enable_image_saving=False,
-        object_type="gate",
+        object_type=OBJECT_TYPE,
     )
     
     # 초기 프롬프트 설정
@@ -501,6 +762,13 @@ def main():
         except Exception as e:
             LOGGER.warning(f"Cleanup 중 오류: {e}")
 
+        # Trajectory 시각화 종료
+        try:
+            if trajectory_visualizer:
+                trajectory_visualizer.stop()
+        except Exception as e:
+            LOGGER.warning(f"Trajectory 시각화 종료 중 오류: {e}")
+        
         # CSV 파일 닫기
         try:
             csv_logger.close()
